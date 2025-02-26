@@ -5,6 +5,7 @@ import argparse
 import time
 from tqdm import tqdm
 from urllib.parse import urlparse
+import platform
 
 def print_banner():
     banner = r"""
@@ -30,8 +31,12 @@ class FastFetchDownloader:
         self.lock = threading.Lock()
         self.downloaded = [0] * num_threads  # Track downloaded bytes per thread
 
-        # Default download directory
-        self.default_download_dir = os.path.expanduser("~/Downloads/FastFetch_Downloader")
+        # Determine the default download directory based on the OS
+        if platform.system() == "Windows":
+            self.default_download_dir = os.path.join(os.path.expanduser("~"), "Downloads", "FastFetch_Downloader")
+        else:
+            self.default_download_dir = os.path.expanduser("~/Downloads/FastFetch_Downloader")
+        
         if output_dir:
             self.download_dir = os.path.abspath(output_dir)
         else:
@@ -129,7 +134,7 @@ if __name__ == "__main__":
     print_banner()
     parser = argparse.ArgumentParser(description="FastFetch Download Manager 🚀")
     parser.add_argument("url", help="File URL to download")
-    parser.add_argument("-o", "--output", help="Output directory (default: ~/Downloads/FastFetch_Downloader)")
+    parser.add_argument("-o", "--output", help="Output directory (default: ~/Downloads/FastFetch_Downloader or C:\\Users\\YourUsername\\Downloads\\FastFetch_Downloader on Windows)")
     parser.add_argument("-f", "--filename", help="Output file name (default: Original file name from URL)")
     parser.add_argument("-t", "--threads", type=int, default=16, help="Number of threads (default: 16)")
     parser.add_argument("-r", "--resume", action="store_true", help="Enable resumable downloads")
